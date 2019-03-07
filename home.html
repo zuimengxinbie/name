@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>太好乐数据分析</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/MultiPicker.css">
+
+    <script src="js/rem.js"></script>
+    <script src="js/MultiPicker.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<header>
+    <img src='image/img_slgan@2x.png' class='logo'>
+</header>
+
+<div class="main">
+    <div class="avatar">
+        <img src="image/taihaole.png" alt="">
+        <p>太好乐精选</p>
+    </div>
+
+    <div class="status">
+        <div class="palce">
+            <div>位置</div>
+            <div class="choice">
+                <input type="text" name="" id="palce-input" value="万立科技" placeholder="" readonly />
+                <span class="arrows"></span>
+            </div>
+        </div>
+        <div class="identity">
+            <div>切换身份</div>
+            <div class="choice">
+                <input type="text" name="" id="iden-input" value="团长" placeholder="" readonly />
+                <span class="arrows"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="exit">
+        退出登陆
+    </div>
+</div>
+
+<footer>
+    <div class="analy">
+        <a href="analy.html">
+            <div class="g-img"></div>
+            <div class="g-title">数据概况</div>
+        </a>
+    </div>
+    <div class="detail">
+        <a href="detail.html">
+            <div class="g-img"></div>
+            <div class="g-title">数据详情</div>
+        </a>
+    </div>
+    <div class="home">
+        <a href="home.html">
+            <div class="g-img"></div>
+            <div class="g-title">我的账号</div>
+        </a>
+    </div>
+</footer>
+<!--身份选择-->
+<div id="iden"></div>
+<!--位置选择-->
+<div id="seat"></div>
+</body>
+</html>
+<script type="text/javascript">
+    new MultiPicker({
+        input: 'iden-input',//点击触发插件的input框的id
+        container: 'iden',//插件插入的容器id
+        jsonData: [{
+            value: '团长',
+        }, {
+            value: '管理员',
+        },{
+            value:'新人'
+        }],
+        success: function (arr) {
+            $('#iden-input').attr('value',JSON.stringify(arr[0].value).replace(/\"/g,""));
+        }//回调
+    });
+    new MultiPicker({
+        input: 'palce-input',//点击触发插件的input框的id
+        container: 'seat',//插件插入的容器id
+        jsonData: [{
+            value: '万立科技',
+        }, {
+            value: '小马',
+        },{
+            value:'雁塔区电子三路西口8号'
+        }],
+        success: function (arr) {
+            $('#palce-input').attr('value',JSON.stringify(arr[0].value).replace(/\"/g,""));
+        }//回调
+    });
+
+</script>

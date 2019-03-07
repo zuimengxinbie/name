@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>太好乐数据分析</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/detail.css?v=123">
+    <link rel="stylesheet" href="css/MultiPicker.css">
+
+
+    <!--创建表格-->
+    <link rel="stylesheet" href="css/element.css">
+    <script src="js/vue.min.js"></script>
+    <script src="js/MultiPicker.js"></script>
+    <script src="js/element.min.js"></script>
+    <!--创建表格-->
+    <!--时间选择插件-->
+    <script src="js/datePicker.js"></script>
+    <!--选择插件-->
+    <script src="js/rem.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+
+</head>
+<script type="text/javascript">
+    function resize(){
+        var docEl = document.documentElement;
+        var clientWidth = window.innerWidth;
+        if(clientWidth <= 375){
+            docEl.style.fontSize = '50px';
+        }else if(clientWidth >= 750){
+            docEl.style.fontSize = '100px';
+        }else{
+            docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+        }
+    }
+    //解决加载时放大后再缩小
+    resize();
+</script>
+<body>
+<header>
+    <img src='image/img_slgan@2x.png' class='logo'>
+</header>
+
+<div id="main">
+    <div class="m-head">
+        <div class="visit">
+            <span class="h-title">访问分析</span>
+        </div>
+        <div class="staus">
+            <span class="h-title">数据统计</span>
+        </div>
+        <div class="user">
+            <span class="h-title">用户画像</span>
+            <span class="h-line"></span>
+        </div>
+    </div>
+    <div class="m-cation">
+        <div class="m-wrap">
+            <div class="m-item hot">年龄区间</div>
+            <div class="m-item">商品占比</div>
+            <div class="m-item">销量金额</div>
+            <div class="m-item">年纪分布</div>
+            <div class="m-item">性别分布</div>
+            <div class="m-item">学历分布</div>
+        </div>
+    </div>
+    <div class="m-date">
+        <div class="d-time">
+            <div class="d-range">
+                日期范围
+                <span class="hot">近7日</span>
+                <span>近30天</span>
+            </div>
+            <div class="d-update">
+                数据更新至 <span>2019-01-03</span>
+            </div>
+        </div>
+        <div class="d-section">
+            <input type="text" readonly id="begin" placeholder="2019-01-01"/>
+            <span class="trig"></span>
+            <span class="writing">至</span>
+            <input type="text" readonly id="ender" placeholder="2019-01-02"/>
+            <span class="trig"></span>
+        </div>
+    </div>
+</div>
+<div id="echarts">
+    <div class="more">
+        <div class="e-title">
+            <input type="text" name="" id="user-input" value="活跃用户" placeholder="" readonly />
+            <span class="trig"></span>
+        </div>
+        <div id="many" style="width: 100%;height: 180px;"></div>
+        <div id="rail" style="width: 100%;height: 160px;"></div>
+        <div class="e-title even">
+            <span class="e-user e-more">更多</span>
+            <span class="trig"></span>
+        </div>
+    </div>
+
+    <div class="more">
+        <div class="e-title">
+            <input type="text" name="" id="pro-input" value="省份用户" placeholder="" readonly />
+            <span class="trig"></span>
+            <span class="trans"></span>
+        </div>
+        <div id="province" style="width: 100%;height: 160px;"></div>
+        <div class="e-title even">
+            <span class="e-user e-more">更多</span>
+            <span class="trig"></span>
+        </div>
+    </div>
+
+    <div class="more">
+        <div class="e-title">
+            <input type="text" name="" id="money-input" value="销售金额" placeholder="" readonly />
+            <span class="trig"></span>
+            <span class="trans"></span>
+        </div>
+        <div id="amount" style="width: 100%; height: 160px;"></div>
+        <div class="e-title even">
+            <span class="e-user e-more">更多</span>
+            <span class="trig"></span>
+        </div>
+    </div>
+
+    <div class="more">
+        <div class="e-title">
+            <input type="text" name="" id="browse-input" value="近期开团浏览" placeholder="" readonly />
+            <span class="trig"></span>
+        </div>
+        <div id="browse" style="width: 100%; height: 220px;"></div>
+    </div>
+
+    <div class="more">
+        <div class="e-title">
+            <input type="text" name="" id="dump-input" value="近期团长数据" placeholder="" readonly />
+            <span class="trig"></span>
+        </div>
+        <div id="graph" v-cloak>
+            <template>
+                <el-table :data="tableData" border stripe style="width: 100%" height="240">
+                    <el-table-column fixed prop="serial" label="序号" width="50">
+                    </el-table-column>
+                    <el-table-column prop="address" label="团长ID" width="150">
+                    </el-table-column>
+                    <el-table-column prop="nums" label="订单数" width="80">
+                    </el-table-column>
+                    <el-table-column prop="change" label="各团转化率" width="90">
+                    </el-table-column>
+                    <el-table-column prop="income" label="销售收入" width="80">
+                    </el-table-column>
+                    <el-table-column prop="refund" label="退款单数" width="80">
+                    </el-table-column>
+                </el-table>
+            </template>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="analy">
+        <a href="analy.html">
+            <div class="g-img"></div>
+            <div class="g-title">数据概况</div>
+        </a>
+    </div>
+    <div class="detail">
+        <a href="detail.html">
+            <div class="g-img"></div>
+            <div class="g-title">数据详情</div>
+        </a>
+    </div>
+    <div class="home">
+        <a href="home.html">
+            <div class="g-img"></div>
+            <div class="g-title">我的账号</div>
+        </a>
+    </div>
+</footer>
+
+<div id="userone"></div>
+<div id="usertwo"></div>
+<div id="userthree"></div>
+<div id="userfour"></div>
+<div id="userfive"></div>
+</body>
+</html>
+
+
+<!--图表-->
+<script type="text/javascript">
+    var many = document.getElementById('many');
+    var rail = document.getElementById('rail');
+    var province = document.getElementById('province');
+    var chars = [];
+    //男女扇形图
+    var mychars = echarts.init(many);
+    option = {
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b}: {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            itemWidth: 10,
+            itemHeight: 10,
+            x: '84%',
+            y: '50%',
+            data: ['男士', '女士', '未知']
+        },
+        series: [
+            {
+                name: '访问来源',
+                type: 'pie',
+                center: ["36%", "50%"],
+                radius: ['50%', '80%'],
+                avoidLabelOverlap: false,
+                label: {
+                    normal: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        textStyle: {
+                            fontSize: '24',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                },
+                data: [
+                    {value: 444, name: '男士'},
+                    {value: 500, name: '女士'},
+                    {value: 66, name: '未知'}
+                ],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    },
+                    normal: {
+                        color: function (params) {
+                            //自定义颜色
+                            var colorList = [
+                                '#009DFF', '#13D7EF', '#2CD000',
+                            ];
+                            return colorList[params.dataIndex]
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    mychars.setOption(option);
+    chars.push(mychars);
+    //年龄柱状图
+    mychars = echarts.init(rail);
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {},
+        grid: {
+            top: '2%',
+            left: '4%',
+            right: '10%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            show: false,
+            type: 'value',
+            boundaryGap: [0, 0.01]
+        },
+        yAxis: {
+            type: 'category',
+            data: ['未知', '70岁以上', '60-69岁', '50-59岁', '40-49岁', '30-39岁', '29-29岁'],
+            axisTick: {
+                show: false,
+            },
+            axisLine: {show: false},
+            axisLabel: {
+                show: true,
+                textStyle: {
+                    fontSize: 10
+                }
+            },
+        },
+        series: [
+            {
+                name: '',
+                type: 'bar',
+                data: [100, 120, 130, 140, 150, 160, 190],
+                barWidth: 10,//柱图宽度
+                itemStyle: {
+                    normal: {
+                        color: '#31A4F7',
+                        label: {
+                            show: true,
+                            position: 'right',
+                            formatter: '{c}',
+                            textStyle: {
+                                color: 'black',
+                                fontSize: 10
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    mychars.setOption(option);
+    window.onresize = function () {
+        for (var i = 0; i < chars.length; i++) {
+            charts[i].resize();
+        }
+    }
+    //省份柱状图
+    mychars = echarts.init(province);
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {},
+        grid: {
+            top: '6%',
+            left: '4%',
+            right: '10%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            show: false,
+            type: 'value',
+            boundaryGap: [0, 0.01]
+        },
+        yAxis: {
+            type: 'category',
+            data: ['河南省', '天津省', '浙江省', '山东省', '陕西省', '湖南省', '山西省'],
+            axisTick: {
+                show: false,
+            },
+            axisLine: {show: false},
+            axisLabel: {
+                show: true,
+                textStyle: {
+                    fontSize: 10
+                }
+            },
+        },
+        series: [
+            {
+                name: '',
+                type: 'bar',
+                data: [100, 120, 130, 140, 150, 160, 190],
+                barWidth: 10,//柱图宽度
+                itemStyle: {
+                    normal: {
+                        color: '#31A4F7',
+                        label: {
+                            show: true,
+                            position: 'right',
+                            formatter: '{c}',
+                            textStyle: {
+                                color: 'black',
+                                fontSize: 10
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    mychars.setOption(option);
+    window.onresize = function () {
+        for (var i = 0; i < chars.length; i++) {
+            charts[i].resize();
+        }
+    }
+    //销售金额
+    mychars = echarts.init(amount);
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {},
+        grid: {
+            top: '6%',
+            left: '4%',
+            right: '10%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            show: false,
+            type: 'value',
+            boundaryGap: [0, 0.01]
+        },
+        yAxis: {
+            type: 'category',
+            data: ['河南省', '天津省', '浙江省', '山东省', '陕西省', '湖南省', '山西省'],
+            axisTick: {
+                show: false,
+            },
+            axisLine: {show: false},
+            axisLabel: {
+                show: true,
+                textStyle: {
+                    fontSize: 10
+                }
+            },
+        },
+        series: [
+            {
+                name: '',
+                type: 'bar',
+                data: [100, 120, 130, 140, 150, 160, 190],
+                barWidth: 10,//柱图宽度
+                itemStyle: {
+                    normal: {
+                        color: '#31A4F7',
+                        label: {
+                            show: true,
+                            position: 'right',
+                            formatter: '{c}',
+                            textStyle: {
+                                color: 'black',
+                                fontSize: 10
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    mychars.setOption(option);
+    window.onresize = function () {
+        for (var i = 0; i < chars.length; i++) {
+            charts[i].resize();
+        }
+    }
+
+    //近期开团浏览
+    mychars = echarts.init(browse);
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                label: {
+                    backgroundColor: '#6a7985'
+                }
+            }
+        },
+        grid: {
+            top: '18%',
+            left: '3%',
+            right: '18%',
+            bottom: '10%',
+            containLabel: true
+        },
+        xAxis: [
+            {
+                name: '(日期)',
+                nameLocation: 'end',
+                position:'bottom',
+                nameGap:30,
+                nameTextStyle: {
+                    color: '#252525',
+                    fontSize: 10
+                },
+                type: 'category',
+                boundaryGap: false,
+                data: ['03.08', '03.09', '03.10', '03.11', '03.12', '03.13'],
+                axisTick: {
+                    show: false,
+                },
+                axisLine: {show: false},
+                axisLabel: {
+                    show: true,
+                    textStyle: {
+                        color: '#848E9C',
+                        fontSize: 10
+                    }
+                },
+                splitLine: {
+                    show: false
+                }
+            }
+        ],
+        yAxis: [
+            {
+                name: '(万人/单位)',
+                nameTextStyle: {
+                    color: '#252525',
+                    fontSize: 10
+                },
+                splitLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false,
+                },
+                axisLine: {show: false},
+                type: 'value',
+                axisLabel: {
+                    show: true,
+                    textStyle: {
+                        color: '#848E9C',
+                        fontSize: 10
+                    },
+                    formatter: function (value, index) {
+                        return value.toFixed(3);
+                    }
+                }
+            }
+        ],
+        dataZoom: [{
+            type: 'inside',
+            start: 0,
+            end: 60
+        }],
+        series: [
+            {
+                name: '浏览数量',
+                type: 'line',
+                stack: '总量',
+                itemStyle: {
+                    normal: { //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0, color: '#81befd' // 0% 处的颜色
+                            }, {
+                                offset: 0.4, color: '#e4f2ff' // 100% 处的颜色
+                            }, {
+                                offset: 1, color: '#fff' // 100% 处的颜色
+                            }]
+                        ), //背景渐变色
+                        lineStyle: {        // 系列级个性化折线样式
+                            width: 2,
+                            type: 'solid',
+                            color: "#35B1FF" //折线的颜色
+                        }
+                    },
+                    emphasis: {
+                        color: '#35B1FF',
+                        lineStyle: {        // 系列级个性化折线样式
+                            width: 2,
+                            type: 'dotted',
+                            color: "#35B1FF"
+                        }
+                    }
+                },//线条样式
+                symbolSize: 5, //折线点的大小
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'top'
+                    }
+                },
+                areaStyle: {normal: {}},
+                data: [0.820, 0.932, 0.901, 0.934, 1.290, 1.330, 1.320]
+            }
+        ]
+    };
+    mychars.setOption(option);
+    window.onresize = function () {
+        for (var i = 0; i < chars.length; i++) {
+            charts[i].resize();
+        }
+    }
+</script>
+<!--表格 -->
+<script>
+    new Vue({
+        el: '#graph',
+        data: function () {
+            return {
+                tableData: [{
+                    serial: '1',
+                    address: '万里科技大厦610',
+                    nums: '32321',
+                    change: '61%',
+                    income: '99999',
+                    refund: 31
+                }, {
+                    serial: '2',
+                    address: '万立科技609',
+                    nums: '32321',
+                    change: '61%',
+                    income: '99999',
+                    refund: 31
+                }, {
+                    serial: '3',
+                    address: '小店区海棠家园',
+                    nums: '32321',
+                    change: '61%',
+                    income: '99999',
+                    refund: 31
+                }, {
+                    serial: '4',
+                    address: '太原市小店区',
+                    nums: '32321',
+                    change: '61%',
+                    income: '99999',
+                    refund: 31
+                }, {
+                    serial: '5',
+                    address: '小店区煤海湾新区',
+                    nums: '32321',
+                    change: '61%',
+                    income: '99999',
+                    refund: 31
+                }, {
+                    serial: '6',
+                    address: '晋源街道北瓦窑村',
+                    nums: '32321',
+                    change: '61%',
+                    income: '99999',
+                    refund: 31
+                }, {
+                    serial: '7',
+                    address: '小店区北格镇南浦村',
+                    nums: '32321',
+                    change: '61%',
+                    income: '99999',
+                    refund: 31
+                }]
+            }
+        }
+    })
+</script>
+
+<script>
+//    时间选择
+    var begin = new datePicker();
+    begin.init({
+        'trigger': '#begin',
+        'type': 'date',
+        'minDate':'2010-1-1',
+        'maxDate':'2100-12-31',
+        'onSubmit':function(){
+            var theSelectData=begin.value;
+        },
+        'onClose':function(){
+        }
+    });
+    var ender = new datePicker();
+    ender.init({
+        'trigger': '#ender',
+        'type': 'date',
+        'minDate':'2010-1-1',
+        'maxDate':'2100-12-31',
+        'onSubmit':function(){
+            var theSelectData=ender.value;
+        },
+        'onClose':function(){
+        }
+    });
+
+//    选框弹窗
+new MultiPicker({
+    input: 'user-input',//点击触发插件的input框的id
+    container: 'userone',//插件插入的容器id
+    jsonData: [{
+        value: '活跃用户',
+    }, {
+        value: '新增用户',
+    }],
+    success: function (arr) {
+        $('#user-input').attr('value',JSON.stringify(arr[0].value).replace(/\"/g,""));
+    }    });
+
+new MultiPicker({
+    input: 'pro-input',//点击触发插件的input框的id
+    container: 'usertwo',//插件插入的容器id
+    jsonData: [{
+        value: '省份用户',
+    },{
+        value: '山西省',
+    }, {
+        value: '山东省',
+    },{
+        value: '湖北省',
+    },{
+        value: '陕西省',
+    },{
+        value: '江苏省',
+    }],
+    success: function (arr) {
+        $('#pro-input').attr('value',JSON.stringify(arr[0].value).replace(/\"/g,""));
+    }    });
+
+new MultiPicker({
+    input: 'money-input',//点击触发插件的input框的id
+    container: 'userthree',//插件插入的容器id
+    jsonData: [{
+        value: '销售金额',
+    }, {
+        value: '购买金额',
+    },{
+        value: '订单数量',
+    }],
+    success: function (arr) {
+        $('#money-input').attr('value',JSON.stringify(arr[0].value).replace(/\"/g,""));
+    }    });
+
+new MultiPicker({
+    input: 'browse-input',//点击触发插件的input框的id
+    container: 'userfour',//插件插入的容器id
+    jsonData: [{
+        value: '近期开团浏览',
+    }, {
+        value: '近期团购数量',
+    }],
+    success: function (arr) {
+        $('#browse-input').attr('value',JSON.stringify(arr[0].value).replace(/\"/g,""));
+    }    });
+
+new MultiPicker({
+    input: 'dump-input',//点击触发插件的input框的id
+    container: 'userfive',//插件插入的容器id
+    jsonData: [{
+        value: '近期团长数据',
+    }, {
+        value: '近期退款单数',
+    },{
+        value: '近期开团订单',
+    },],
+    success: function (arr) {
+        $('#dump-input').attr('value',JSON.stringify(arr[0].value).replace(/\"/g,""));
+    }    });
+</script>
